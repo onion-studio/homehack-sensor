@@ -2,6 +2,15 @@ const express = require('express')
 const app = express()
 const cors = require('cors')
 const dht = require('node-dht-sensor')
+const Gpio = require('onoff').Gpio;
+const {exec} = require('child_process')
+
+const PORT = 3333
+
+const motion = new Gpio(17, 'in', 'rising')
+motion.watch((err, value) => {
+	exec('xset -display :0.0 s reset')
+})
 
 app.use(cors())
 app.get('/', async (req, res) => {
@@ -14,4 +23,4 @@ app.get('/', async (req, res) => {
 	res.send(dhtResult)
 })
 
-app.listen(3030, () => console.log('listening 3030...'))
+app.listen(PORT, () => console.log(`...listening ${PORT}`))
